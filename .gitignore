@@ -1,8 +1,9 @@
 .pioenvs
 .piolibdeps
-.clang_complete
 .vscode
+.clang_complete
 .gcc-flags.json
+.gitignore
 .travis.yml
 secrets.h
 /lib
