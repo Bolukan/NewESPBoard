@@ -3,6 +3,8 @@
 #endif
 
 #define COMPDATE __DATE__ " " __TIME__
+#define INCLUDE_OTA
+
 #include <Arduino.h>
 /*
 Dependency Graph
@@ -21,21 +23,30 @@ Dependency Graph
 */
 // WiFi
 #if defined(ESP8266)
-  #include <ESP8266WiFi.h>       // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/ESP8266WiFi.h
-  #include <ESPAsyncTCP.h>       // https://github.com/me-no-dev/ESPAsyncTCP
-//  #include <ESP8266mDNS.h>       // PlatformIO platform-espressif8266
+  #include <ESP8266WiFi.h>           // https://github.com/esp8266/Arduino/blob/master/libraries/ESP8266WiFi/src/ESP8266WiFi.h
+  #include <ESPAsyncTCP.h>           // https://github.com/me-no-dev/ESPAsyncTCP
 #elif defined(ESP32)
-  #include <WiFi.h>              // https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/src/WiFi.h
-  #include <AsyncTCP.h>          // https://github.com/me-no-dev/AsyncTCP
-//  #include <ESPmDNS.h>           // PlatformIO platform-espressif32
+  #include <WiFi.h>                  // https://github.com/espressif/arduino-esp32/blob/master/libraries/WiFi/src/WiFi.h
+  #include <AsyncTCP.h>              // https://github.com/me-no-dev/AsyncTCP
 #endif
-// For OTA: ESPmDNS + WiFiUdp + ArduinoOTA
-// #include <WiFiUdp.h>             // PlatformIO platform-espressif8266 or platform-espressif32
-#include <ArduinoOTA.h>          // PlatformIO platform-espressif8266 or platform-espressif32
-// For Webserver:
-#include <ESPAsyncWebServer.h>   // https://github.com/me-no-dev/ESPAsyncWebServer
 
+// OTA
+#if defined(INCLUDE_OTA)
+  #if defined(ESP8266)
+    #include <ESP8266mDNS.h>         // PlatformIO platform-espressif8266
+  #elif defined(ESP32)
+    #include <ESPmDNS.h>             // PlatformIO platform-espressif32
+  #endif
+  // For OTA: ESPmDNS + WiFiUdp + ArduinoOTA
+  #include <WiFiUdp.h>               // PlatformIO platform-espressif8266 or platform-espressif32
+  #include <ArduinoOTA.h>            // PlatformIO platform-espressif8266 or platform-espressif32
+#endif
+
+// Webserver
+#include <ESPAsyncWebServer.h>       // https://github.com/me-no-dev/ESPAsyncWebServer
 #include "webpage.h"
+
+// Accesspoint Credentials
 #include "secrets.h"
 #ifndef SECRETS_H
  #define SECRETS_H
@@ -47,18 +58,20 @@ Dependency Graph
 AsyncWebServer server(80);
 String webpage = "";
 char _hostname[12];
+// WiFi
 bool _wifiGotIP = false;
 bool _wifiAvailable = false;
+// Led
 unsigned long previousMillis = 0;
 const int intervalMillis = 100;
 bool _ledOn = true;
-
 #if defined(ARDUINO_ESP8266_ESP12)
 const int ledPin = 2;
 #else
 const int ledPin = LED_BUILTIN;
 #endif
 
+// ********************  FUNCTIONS  ********************
 
 String Hex4s(uint32_t value) {
   char buffer[9];
@@ -161,6 +174,7 @@ void notFound(AsyncWebServerRequest *request) {
     request->send(404, "text/plain", "Not found");
 }
 
+#if defined(INCLUDE_OTA)
 // ********************  OTA  ********************
 
 void OTA_onStart(void) {
@@ -197,6 +211,8 @@ void OTA_onError(ota_error_t error) {
     Serial.println("End Failed");
   }
 }
+
+#endif
 
 char* Hostname(char hostname[]) {
 #ifdef ESP32
@@ -244,12 +260,14 @@ void setup(){
   Serial.begin(115200);
   Serial.print(F("\nCongratulations with your new ESP Board!!\n"));
 
+  #if defined(INCLUDE_OTA)
   // OTA
   ArduinoOTA.setHostname(Hostname(_hostname));
   ArduinoOTA.onStart(OTA_onStart);
   ArduinoOTA.onEnd(OTA_onEnd);
   ArduinoOTA.onProgress(OTA_onProgress);
   ArduinoOTA.onError(OTA_onError);
+  #endif
 
   // WebServer
   server.onNotFound(notFound);
@@ -275,13 +293,17 @@ void loop()
     _wifiGotIP = false;
     _wifiAvailable = true;
     setLed(false);
+    #if defined(INCLUDE_OTA)
     ArduinoOTA.begin();
     Serial.println("ArduinoOTA begin");
+    #endif
     server.begin();
     Serial.println("server begin");
   }
   if (_wifiAvailable) {
+    #if defined(INCLUDE_OTA)
     ArduinoOTA.handle();
+    #endif
   } else {
     if ((unsigned long)(millis() - previousMillis) >= intervalMillis) {
       setLed(!_ledOn);
