@@ -1,0 +1,25 @@
+{
+	"name": "NewESPBoard",
+	"description": "Show hardware and WiFi info of the device",
+	"keywords": "WiFi, Flash, MCU, ESP8266, ESP32, OTA",
+	"authors": {
+		"name": "Bolukan",
+		"url": "https://www.github.com/Bolukan",
+		"maintainer": true
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Bolukan/NewESPBoard"
+	},
+	"version": "1.0.0",
+	"license": "MIT",
+	"homepage": "https://github.com/Bolukan/NewESPBoard",
+	"frameworks": "arduino",
+	"platforms": ["espressif8266", "espressif32"],
+	"dependencies" : [
+	{
+		"name": "ESP Async WebServer",
+		"version": "^1.2.2",
+		"authors": "Hristo Gochkov"
+	}]
+}
