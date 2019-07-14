@@ -2,6 +2,7 @@
 .piolibdeps
 .vscode
 .clang_complete
+.pio
 /.gcc-flags.json
 /.gitignore
 /.travis.yml
