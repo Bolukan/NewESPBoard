@@ -1,0 +1,25 @@
+language: python
+python:
+    - "3.7"
+
+# Cache PlatformIO packages using Travis CI container-based infrastructure
+sudo: false
+cache:
+    directories:
+        - "~/.platformio"
+
+env:
+    # ESP8266
+    - SCRIPT=platformioMain EXAMPLE_NAME=main.cpp EXAMPLE_FOLDER=/src/ BOARDTYPE=ESP8266 BOARD=d1_mini
+
+install:
+    - pip install -U platformio
+    - platformio update
+    #
+    # Libraries from PlatformIO Library Registry:
+    # https://github.com/me-no-dev/ESPAsyncWebServer
+    # https://github.com/Bolukan/WifiMessaging
+    - platformio lib -g install 306 https://github.com/Bolukan/WifiMessaging.git
+
+script:
+    - scripts/travis/$SCRIPT.sh
