@@ -1,7 +1,8 @@
 # New ESP board
 
-Upload this script to a new ESP8266 or ESP32 to gather the information on the hardware and WiFi connection.
+Upload this script to a new ESP8266 to gather the information on the hardware and WiFi connection.
 The script starts a webserver. Open the webpage with your browser.
+Also a MQTT message is sent to devices/newboard and devices/<mac> 
 
 The script also runs the OTA (Over-The-Air) service, which enables you to replace the code with your own code over-the-air.
 

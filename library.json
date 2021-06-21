@@ -1,7 +1,7 @@
 {
 	"name": "NewESPBoard",
 	"description": "Show hardware and WiFi info of the device",
-	"keywords": "WiFi, Flash, MCU, ESP8266, ESP32, OTA",
+	"keywords": "WiFi, Flash, MCU, ESP8266, MQTT, OTA",
 	"authors": {
 		"name": "Bolukan",
 		"url": "https://www.github.com/Bolukan",
@@ -11,15 +11,25 @@
 		"type": "git",
 		"url": "https://github.com/Bolukan/NewESPBoard"
 	},
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"license": "MIT",
 	"homepage": "https://github.com/Bolukan/NewESPBoard",
 	"frameworks": "arduino",
-	"platforms": ["espressif8266", "espressif32"],
+	"platforms": ["espressif8266"],
 	"dependencies" : [
 	{
 		"name": "ESP Async WebServer",
 		"version": "^1.2.2",
 		"authors": "Hristo Gochkov"
+	},
+	{
+		"name": "PubSubClient",
+		"version": "2.8",
+		"authors": "Nick O'Leary"
+	},
+	{
+		"name": "WifiMessaging",
+		"version": "0.9.3",
+		"authors": "Bolukan"
 	}]
 }
